@@ -26,7 +26,10 @@ SECRET_KEY = '38o-@mb9_ry8#tj5o^$ci6!!o_h2x0kfg=-n13c*!2&m@ehe43'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+# CORS config
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = False
+CORS_EXPOSE_HEADERS = ['Authorization']
 
 # Application definition
 
@@ -37,7 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'main_app.apps.MainAppConfig'
+    'main_app.apps.MainAppConfig',
+    'rest_framework',
+    'rest_framework.authtoken'
 ]
 
 MIDDLEWARE = [
@@ -100,9 +105,14 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
+REST_FRAMEWORK = {
+   'DEFAULT_AUTHENTICATION_CLASSES': (
+       'rest_framework.authentication.BasicAuthentication',
+       'rest_framework.authentication.TokenAuthentication'
+    )
+}
 
 LANGUAGE_CODE = 'en-us'
 
