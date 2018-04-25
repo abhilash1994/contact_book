@@ -16,13 +16,21 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
+from rest_framework_swagger.views import get_swagger_view
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.documentation import include_docs_urls
 from main_app.views import Contact, Login, Logout, SearchName, SearchEmail, Signup
+from rest_framework_swagger import SwaggerUIRenderer, OpenAPIRenderer
+
+schema_view = get_swagger_view(
+    title='Contact Book API',
+    renderer_classes=[OpenAPIRenderer, SwaggerUIRenderer]
+)
 
 urlpatterns = [
     # url(r'^admin/', admin.site.urls),
     url(r'^contact', Contact.as_view(), name='home'),
+    url(r'^$', schema_view),
     url(r'^name/', SearchName.as_view(), name='home'),
     url(r'^email/', SearchEmail.as_view(), name='home'),
     url(r'^api-auth/', include('rest_framework.urls')),
