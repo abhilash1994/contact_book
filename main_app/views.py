@@ -1,17 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
+from serializers import ContactBookSerializer
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import HttpResponse
-from django.views import View
 from django.utils.decorators import method_decorator
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.shortcuts import render
+from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
-# from rest_framework.authentication import BasicAuthentication, SessionAuthentication
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from models import Contact as Ct
 
@@ -19,29 +16,62 @@ from models import Contact as Ct
 
 
 class Contact(APIView):
-    def post(self, request):
-        return None
+    """
+    post:
+    Create a new contact instance.
+
+    delete:
+    Delete an existing contact instance
+
+    put:
+    Update an exisiting contact instance
+    """
+    def post(self, request, format=None):
+        if request.user.is_authenticated():
+            serializer = ContactBookSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({"Error": "Not logged in"}, status=status.HTTP_401_UNAUTHORIZED)
 
     def delete(self, request):
-        return None
+        if request.user.is_authenticated():
+            email = request.data['email']
+            Ct.objects.filter(email=email).delete()
+            return Response("Record deleted successfully", status=status.HTTP_200_OK)
+        else:
+            return Response({"Error": "Not logged in"}, status=status.HTTP_401_UNAUTHORIZED)
 
     def put(self, request):
         return None
 
 
 class SearchName(APIView):
-
+    """
+    Returns a list of contacts whose names are being searched for.
+    """
     def get(self, request):
         if request.user.is_authenticated():
-            print "Hello, user is authenticated"
-        # names = [contact.name for contact in Ct.objects.all()]
-        return Response("names")
+            name = request.data['name']
+            names = [contact for contact in Ct.objects.filter(name=name)]
+            return Response(names)
+        else:
+            return Response({"Error": "Not logged in"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class SearchEmail(APIView):
+    """
+    Returns a list of contact whose emails are being searched for.
+    """
     def get(self, request):
-        emails = [contact.email for contact in Ct.objects.all()]
-        return Response(emails)
+        if request.user.is_authenticated():
+            email = request.data['email']
+            emails = [contact for contact in Ct.objects.filter(name=email)]
+            return Response(emails)
+        else:
+            return Response({"Error": "Not logged in"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 @method_decorator(csrf_exempt, name='post')
