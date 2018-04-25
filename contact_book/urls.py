@@ -17,16 +17,17 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.views.decorators.csrf import csrf_exempt
-
+from rest_framework.documentation import include_docs_urls
 from main_app.views import Contact, Login, Logout, SearchName, SearchEmail, Signup
 
 urlpatterns = [
     # url(r'^admin/', admin.site.urls),
-    url(r'^$', Contact.as_view(), name='home'),
+    url(r'^contact', Contact.as_view(), name='home'),
     url(r'^name/', SearchName.as_view(), name='home'),
     url(r'^email/', SearchEmail.as_view(), name='home'),
     url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^register/$', csrf_exempt(Signup.as_view())),
     url(r'^login/$', csrf_exempt(Login.as_view())),
-    url(r'^logout/$', csrf_exempt(Logout.as_view()))
+    url(r'^logout/$', csrf_exempt(Logout.as_view())),
+    url(r'^docs/', include_docs_urls(title='Contact Book'))
 ]
