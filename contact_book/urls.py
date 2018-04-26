@@ -20,11 +20,9 @@ from rest_framework_swagger.views import get_swagger_view
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.documentation import include_docs_urls
 from main_app.views import Contact, Login, Logout, SearchName, SearchEmail, Signup
-from rest_framework_swagger import SwaggerUIRenderer, OpenAPIRenderer
 
 schema_view = get_swagger_view(
-    title='Contact Book API',
-    renderer_classes=[OpenAPIRenderer, SwaggerUIRenderer]
+    title='Contact Book API'
 )
 
 urlpatterns = [
